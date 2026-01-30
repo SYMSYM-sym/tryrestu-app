@@ -1337,36 +1337,48 @@
 
                 const data = await response.json();
 
-                if (data.execution_id) {
-                    pollStatus(data.execution_id);
-                } else if (data.video_url) {
+                // Handle different response formats
+                const jobId = data.execution_id || data.job_id;
+
+                if (data.video_url) {
                     showResult(data.video_url);
+                } else if (jobId) {
+                    pollStatus(jobId);
                 } else {
-                    throw new Error('Invalid response from server');
+                    console.error('Unexpected response:', data);
+                    throw new Error(data.error || data.message || 'Invalid response from server');
                 }
 
             } catch (error) {
-                showError(error.message || 'Something went wrong. Please try again.');
+                console.error('Submission error:', error);
+                showError(error.message || 'Connection failed. Please check your internet and try again.');
             }
         });
 
-        async function pollStatus(executionId) {
+        async function pollStatus(jobId) {
             try {
                 const response = await fetch(STATUS_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ execution_id: executionId })
+                    body: JSON.stringify({ execution_id: jobId, job_id: jobId })
                 });
 
                 const data = await response.json();
 
                 if (data.status === 'completed' && data.video_url) {
                     showResult(data.video_url);
-                } else if (data.status === 'failed') {
-                    throw new Error(data.error || 'Video generation failed');
+                } else if (data.status === 'failed' || data.status === 'error') {
+                    throw new Error(data.error || data.message || 'Video generation failed');
                 } else {
+                    // Update step based on status
                     if (data.step) setStep(data.step);
-                    setTimeout(() => pollStatus(executionId), 5000);
+
+                    // Map status to step if available
+                    if (data.status === 'generating') setStep('generating');
+                    else if (data.status === 'rendering') setStep('rendering');
+
+                    // Continue polling
+                    setTimeout(() => pollStatus(jobId), 5000);
                 }
 
             } catch (error) {
