@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f4e4bc"/>
+      <stop offset="50%" style="stop-color:#d4af37"/>
+      <stop offset="100%" style="stop-color:#a68a2a"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#0a0a0a"/>
+  <circle cx="32" cy="32" r="29" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Stylized R -->
+  <text x="32" y="44" font-family="Georgia, serif" font-size="36" font-weight="700" text-anchor="middle" fill="url(#gold)">R</text>
+
+  <!-- Small plate accent -->
+  <ellipse cx="32" cy="52" rx="12" ry="3" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.6"/>
+</svg>
