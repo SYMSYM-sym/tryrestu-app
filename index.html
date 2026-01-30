@@ -1375,11 +1375,8 @@
 
         async function pollStatus(jobId) {
             try {
-                const response = await fetch(STATUS_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ execution_id: jobId, job_id: jobId })
-                });
+                // Use GET request with query parameter
+                const response = await fetch(`${STATUS_URL}?job_id=${encodeURIComponent(jobId)}`);
 
                 const data = await response.json();
 
