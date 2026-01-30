@@ -1380,7 +1380,7 @@
 
                 const data = await response.json();
 
-                if (data.status === 'completed' && data.video_url) {
+                if ((data.status === 'completed' || data.status === 'complete') && data.video_url) {
                     showResult(data.video_url);
                 } else if (data.status === 'failed' || data.status === 'error') {
                     throw new Error(data.error || data.message || 'Video generation failed');
