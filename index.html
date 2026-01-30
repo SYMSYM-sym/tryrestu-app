@@ -1242,17 +1242,35 @@
         setupUpload('foodUpload', 'foodFiles');
 
         async function uploadToCloudinary(file) {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', CLOUDINARY_PRESET);
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', CLOUDINARY_PRESET);
 
-            const response = await fetch(CLOUDINARY_URL, {
-                method: 'POST',
-                body: formData
-            });
+                const response = await fetch(CLOUDINARY_URL, {
+                    method: 'POST',
+                    body: formData
+                });
 
-            const data = await response.json();
-            return data.secure_url;
+                if (!response.ok) {
+                    throw new Error(`Upload failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error.message || 'Upload failed');
+                }
+
+                if (!data.secure_url) {
+                    throw new Error('No URL returned from upload');
+                }
+
+                return data.secure_url;
+            } catch (err) {
+                console.error('Cloudinary upload error:', err);
+                throw new Error(`Image upload failed: ${err.message}`);
+            }
         }
 
         function setStep(stepName) {
