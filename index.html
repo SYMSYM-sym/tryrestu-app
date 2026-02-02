@@ -1459,8 +1459,17 @@
             }
         }
 
+        // Auto-check status when page becomes visible again (mobile wake up)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && currentJobId && progressSection.classList.contains('active')) {
+                console.log('Page visible - checking status...');
+                pollStatus(currentJobId);
+            }
+        });
+
         function showResult(videoUrl) {
             stopTimer();
+            currentJobId = null; // Clear job ID when complete
             progressSection.classList.remove('active');
             resultSection.classList.add('active');
             resultVideo.src = videoUrl;
@@ -1477,6 +1486,7 @@
 
         function showError(message) {
             stopTimer();
+            currentJobId = null; // Clear job ID on error
             errorMessage.textContent = message;
             errorMessage.classList.add('active');
             submitBtn.disabled = false;
